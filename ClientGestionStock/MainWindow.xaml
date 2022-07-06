@@ -56,10 +56,23 @@
             <RowDefinition Style="{StaticResource RowStyle}"/>
         </Grid.RowDefinitions>
 
-        <Button Content="Lister tous les articles" Style="{StaticResource BasicButton}" Grid.Column="0" Grid.Row="0" Click="ListAllArticles"/>
-        <Button Content="Lister toutes les categories" Style="{StaticResource BasicButton}" Grid.Column="0" Grid.Row="1" Click="ListAllCategories"/>
+        <Button 
+            Content="Lister tous les articles" 
+            Style="{StaticResource BasicButton}" 
+            Grid.Column="0" Grid.Row="0" 
+            Click="ListAllArticles"/>
+        
+        <Button 
+            Content="Lister toutes les categories" 
+            Style="{StaticResource BasicButton}" 
+            Grid.Column="0" Grid.Row="1" 
+            Click="ListAllCategories"/>
 
-        <Button Content="Vider la liste" Style="{StaticResource BasicButton}" Grid.Column="0" Grid.Row="9" Click="ClearQueryResult"/>
+        <Button 
+            Content="Vider la liste" 
+            Style="{StaticResource BasicButton}" 
+            Grid.Column="0" Grid.Row="9" 
+            Click="ClearQueryResult"/>
 
         <DataGrid 
             ItemsSource="{Binding ArticleResult}" 

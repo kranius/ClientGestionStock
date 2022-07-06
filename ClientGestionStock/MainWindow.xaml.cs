@@ -1,5 +1,4 @@
-﻿using ClientGestionStock.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,6 +7,8 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+
+using WSGestionStock;
 
 namespace ClientGestionStock
 {
@@ -47,63 +48,32 @@ namespace ClientGestionStock
             }
         }
 
-        // localhostService.WebService ws = new localhostService.WebService();
-
-        private void PopulateArticles()
-        {
-            var categories = new List<Categorie>();
-            var articles = new List<Article>();
-
-            Categorie meubles = new Categorie(1, "meubles", "pour l'interieur ou l'exterieur");
-            Categorie tech = new Categorie(2, "tech", "appareils high-tech");
-            categories.Add(meubles);
-            categories.Add(tech);
-
-            articles.Add(new Article(1, "Chaise", 2, 15, 1));
-            articles.Add(new Article(2, "Table", 1, 80, 1));
-            articles.Add(new Article(3, "Telephone", 1, 300, 2));
-            articles.Add(new Article(4, "Casque sans fil", 1, 120, 2));
-
-            var Join = (from a in articles
-                        join c in categories
-                        on a.CategorieId equals c.Id
-                        select new { a.Id, a.Prix, a.QuantiteMinimale, a.Description, c.Name }).ToList();
-                        //select new {Article=a, Categorie=c }).ToList();
-
-            ArticleResult.Clear();
-            foreach (var article in Join)
-            {
-                ArticleResult.Add(article);
-            }
-            ShowArticles();
-        }
-
-        private void PopulateCategories()
-        {
-            var categories = new List<Categorie>();
-            Categorie meubles = new Categorie(1, "meubles", "pour l'interieur ou l'exterieur");
-            Categorie tech = new Categorie(2, "tech", "appareils high-tech");
-            categories.Add(meubles);
-            categories.Add(tech);
-
-            CategorieResult.Clear();
-            foreach (var categorie in categories)
-            {
-                CategorieResult.Add(categorie);
-            }
-            ShowCategories();
-        }
+        private GestionStockClient wsArticleClient = new GestionStockClient();
+        private GestionCategorieClient wsCategorieClient = new GestionCategorieClient();
 
         private void ListAllArticles(object sender, RoutedEventArgs e)
         {
-            PopulateArticles();
-            //ReplaceQueryResultWith(ws.ListerArticles());
+            var articles = wsArticleClient.GetArticles();
+            var categories = wsCategorieClient.GetCategories();
+
+            var result = (from a in articles
+                          join c in categories
+                          on a.Categorie.Id equals c.Id
+                          select new { a.Id, a.Prix, a.QteMini, a.Designation, Categorie = c.Nom })
+                          .ToList();
+
+            ArticleResult.Clear();
+            ArticleResult.Concat(result);
+            ShowArticles();
         }
 
         private void ListAllCategories(object sender, RoutedEventArgs e)
         {
-            PopulateCategories();
-            //ReplaceQueryResultWith(ws.ListerCategories());
+            var categories = wsCategorieClient.GetCategories();
+
+            CategorieResult.Clear();
+            CategorieResult.Concat(categories);
+            ShowCategories();
         }
 
         private void ClearQueryResult(object sender, RoutedEventArgs e)
